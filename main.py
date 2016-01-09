@@ -1,45 +1,6 @@
 from sys import argv
-from collections import defaultdict
 import minimum_vertex_cover as mvc
-
-
-class Graph:
-    """
-    Graph representa um grafo.
-
-    Este contem um dicionario de todos os nos e suas ligacoes:
-    Exemplo:
-        A : [B, C, D]
-        B : [D, A]
-        C : [D]
-
-
-    minimum vertex cover: https://en.wikipedia.org/wiki/K%C5%91nig%27s_theorem_(graph_theory)
-
-
-    """
-    def __init__(self, connections, directed=False):
-        self.graph = defaultdict(set)
-        self.directed = directed
-        self.add_connections(connections)
-
-    def add_connections(self, connections):
-        for parent, child in connections:
-            self.add(parent, child)
-
-    def add(self, parent, child):
-        self.graph[parent].add(child)
-        if not self.directed:
-            self.graph[child].add(parent)
-
-    def is_connected(self, node1, node2):
-        return node1 in self.graph and node2 in self.graph[node1]
-
-    def neighbours(self, id):
-        return self.graph[id]
-
-    def __str__(self):
-        return '{}({})'.format(self.__class__.__name__, dict(self.graph))
+from Grid import Grid
 
 
 def run():
@@ -84,16 +45,37 @@ def run():
 
     # remover da lista que contem todos os vertices
     # os valors que estao no mvc
+    sol_list = all_vertices.copy()
     for v in m:
         for u in m[v]:
             try:
-                all_vertices.remove(u)
+                sol_list.remove(u)
 
             except ValueError:
                 pass
 
-    print("\nSOLUCAO: tam =", len(all_vertices))
-    print(all_vertices)
+    print("\nSOLUCAO: tam =", len(sol_list))
+    print(sol_list)
+
+    sol_bin = []
+    sol_bin = sol_inicial(all_vertices, sol_list)
+
+    g = Grid(n_vertices, n_arestas)
+
+    print(g)
+
+
+def sol_inicial(all_vertices, sol_list):
+    sol = []
+
+    for v in all_vertices:
+        if v in sol_list:
+            sol.append(1)
+
+        else:
+            sol.append(0)
+
+    return sol
 
 
 def show_graph(graph):
