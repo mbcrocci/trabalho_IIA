@@ -74,12 +74,16 @@ def bipartiteMatch(graph):
                             return 1
             return 0
 
-        for v in unmatched: recurse(v)
+        # s
+        for v in unmatched:
+            recurse(v)
+
 
 
 # Find a minimum vertex cover
 def min_vertex_cover(left_v, right_v):
-    '''Use the Hopcroft-Karp algorithm to find a maximum
+    """
+    Use the Hopcroft-Karp algorithm to find a maximum
     matching or maximum independent set of a bipartite graph.
     Next, find a minimum vertex cover by finding the
     complement of a maximum independent set.
@@ -101,9 +105,7 @@ def min_vertex_cover(left_v, right_v):
     and the ouput or minimum vertex cover would be:
     {2000: [1000, 1001]}
     with vertex 2000 being the minimum vertex cover.
-    The code can also generate a bipartite graph with an arbitrary
-    number of edges and vertices, write the graph to a file, and
-    read the graph and convert it to the appropriate format.'''
+    """
 
     data_hk = bipartiteMatch(left_v)
     left_mis = data_hk[1]

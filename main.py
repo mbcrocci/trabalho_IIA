@@ -1,8 +1,6 @@
 from sys import argv
 import minimum_vertex_cover as mvc
-from Grid import Grid
-from random import randint
-
+from Genetic import Pop, Solucao
 
 def run():
     # open File
@@ -21,14 +19,46 @@ def run():
     sol_bin = sol_in_bin(n_vertices, sol_opt)
     print("SOL BIN: ", sol_bin)
 
-    g = Grid(n_vertices, full_graph)
+    alg_genetico(100, n_vertices)
 
-    print("GRID:")
-    print(g)
 
-    pop = []  # 50 e o tamanho da populacao
-    for i in range(50):
-        pop.append(gerar_solucao(n_vertices))
+def alg_genetico(runs, n_geracoes):
+    mbf = 0.0
+    best_ever = None
+
+    for r in range(runs):
+        pop = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=n_geracoes, max_gen=100)
+        pop.evaluate()
+        gen_actual = 1
+
+        best_run = pop.get_best()
+
+        parents = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=n_geracoes, max_gen=100)
+
+        while gen_actual < n_geracoes:
+            parents = pop.tournament(parents)
+            pop = pop.genetic_operators(parents)
+            pop.evaluate()
+            best_run = pop.get_best()
+            gen_actual += 1
+
+        invalids = 0
+        for s in pop.pop:
+            if not s.valido:
+                invalids += 1
+
+        print("\nRepeticao", r)
+        print(best_run)
+        print("\nPercentagem Invalidos:", invalids/20*100)
+
+        mbf += best_run.fitness
+
+        if r == 0 or best_run.fitness > best_ever.fitness:
+            best_ever = best_run
+
+    print("MBF: ", mbf)
+    print("MELHOR SOLUCAO ENCONTRADA:")
+    print(best_ever.sol)
 
 
 def all_vert(graph):
@@ -48,7 +78,7 @@ def pesquisa_local(graph):
 
     # calcula o minimum vertex cover
     m = mvc.min_vertex_cover(graph[0], graph[1])
-    print(m)
+    show_graph(m)
 
     """
         Sendo A   - conjunto de todos os vertices
@@ -75,12 +105,6 @@ def pesquisa_local(graph):
     print(sol_list)
 
     return sol_list
-
-
-def gerar_solucao(n_vertices):
-    sol = []
-    for v in range(n_vertices):
-        sol.append(randint(0, 1))
 
 
 def sol_in_bin(n_vertices, sol_list):
