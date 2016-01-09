@@ -13,10 +13,25 @@ def run():
         file_name = input("Enter a file name: ")
 
     graph, n_vertices, n_arestas = read_file(file_name)
+    full_graph = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
+    show_graph(full_graph)
 
-    full_grap = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
-    show_graph(full_grap)
+    sol_opt = pesquisa_local(graph) # constante
 
+    sol_bin = sol_in_bin(n_vertices, sol_opt)
+    print("SOL BIN: ", sol_bin)
+
+    g = Grid(n_vertices, full_graph)
+
+    print("GRID:")
+    print(g)
+
+    pop = []  # 50 e o tamanho da populacao
+    for i in range(50):
+        pop.append(gerar_solucao(n_vertices))
+
+
+def all_vert(graph):
     # Criar uma lista com todos os vertices
     keys = list(graph[0].keys()) + list(graph[1].keys())
     all_vertices = []
@@ -24,9 +39,10 @@ def run():
         if v not in all_vertices:
             all_vertices.append(v)
 
-    print("\nTODOS OS VERTICES")
-    print(all_vertices)
+    return all_vertices
 
+
+def pesquisa_local(graph):
     # MINIMUM VERTEX COVER
     print("\nMVC")
 
@@ -46,7 +62,7 @@ def run():
 
     # remover da lista que contem todos os vertices
     # os valors que estao no mvc
-    sol_list = all_vertices.copy()
+    sol_list = all_vert(graph)
     for v in m:
         for u in m[v]:
             try:
@@ -58,17 +74,7 @@ def run():
     print("\nSOLUCAO: tam =", len(sol_list))
     print(sol_list)
 
-    sol_bin = sol_inicial(all_vertices, sol_list)
-    print("SOL BIN: ", sol_bin)
-
-    g = Grid(n_vertices, full_grap)
-
-    print("GRID:")
-    print(g)
-
-    pop = []  # 50 e o tamanho da populacao
-    for i in range(50):
-        pop.append(gerar_solucao(n_vertices))
+    return sol_list
 
 
 def gerar_solucao(n_vertices):
@@ -77,15 +83,14 @@ def gerar_solucao(n_vertices):
         sol.append(randint(0, 1))
 
 
-def sol_inicial(all_vertices, sol_list):
+def sol_in_bin(n_vertices, sol_list):
     sol = []
 
-    for v in all_vertices:
-        if v in sol_list:
-            sol.append(1)
+    for v in range(n_vertices):
+        sol.append(0)
 
-        else:
-            sol.append(0)
+    for v in sol_list:
+        sol[v-1] = 1
 
     return sol
 
@@ -123,8 +128,8 @@ def read_file(file_name):
         for edge in graph:  # por cada linha
             if edge.startswith('p'):
                 l = edge.split(' ')
-                n_arestas = int(l[2])
-                n_vertices = int(l[3])
+                n_vertices = int(l[2])
+                n_arestas = int(l[3])
 
             if edge.startswith('e'):
                 e = edge.split(' ')
