@@ -39,11 +39,20 @@ class Pop:
             s.fitness = self.evaluate_sol(s)
 
     def evaluate_sol(self, s):
-        for i in range(self.n_genes):
-            if s.sol[i-1] == 1:
-                pass
+        ft = 0
+        # (TODO): Ver se este fitness pode ser calculado de outra maneira§
+        for i in range(0, self.n_genes-1):
+            if s.sol[i] == 1:
+                for j in range(0, self.n_genes-1):
+                    if i != j and s.sol[j] == 1:
+                        ft -= 1
 
-        return 1
+        if ft == 0:
+            for i in range(0, self.n_genes-1):
+                if s.sol[i] == 1:
+                    ft += 1
+
+        return ft
 
     def get_best(self):
         best = Solucao(self.n_genes)
