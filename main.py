@@ -50,8 +50,20 @@ def run():
     except IndexError:
         file_name = input("Enter a file name: ")
 
-
     graph, n_vertices, n_arestas = read_file(file_name)
+
+    graph_show = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
+    show_graph(graph_show)
+
+    # Criar uma lista com todos os vertices
+    keys = list(graph[0].keys()) + list(graph[1].keys())
+    all_vertices = []
+    for v in keys:
+        if v not in all_vertices:
+            all_vertices.append(v)
+
+    print("\nTODOS OS VERTICES")
+    print(all_vertices)
 
     # MINIMUM VERTEX COVER
     print("\nMVC")
@@ -69,7 +81,9 @@ def run():
               A = I + EC
               I = A - MVC
     """
-    all_vertices = [i for i in range(1, n_vertices)] # (TODO): construir isto melhor
+
+    # remover da lista que contem todos os vertices
+    # os valors que estao no mvc
     for v in m:
         for u in m[v]:
             try:
@@ -78,8 +92,20 @@ def run():
             except ValueError:
                 pass
 
+    print("\nSOLUCAO: tam =", len(all_vertices))
     print(all_vertices)
 
+
+def show_graph(graph):
+    string = ""
+    for k in graph:
+        string += str(k) + ": ["
+        for v in graph[k]:
+            string += str(v) + ' '
+
+        string += "]\n"
+
+    print(string)
 
 
 def read_file(file_name):
