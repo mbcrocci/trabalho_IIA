@@ -59,9 +59,11 @@ def run():
 
     sol_bin = []
     sol_bin = sol_inicial(all_vertices, sol_list)
+    print("SOL BIN: ", sol_bin)
 
     g = Grid(n_vertices, n_arestas)
 
+    print("GRID:")
     print(g)
 
 
