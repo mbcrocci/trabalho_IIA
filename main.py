@@ -47,9 +47,9 @@ def alg_genetico(runs, n_geracoes):
             if not s.valido:
                 invalids += 1
 
-        print("\nRepeticao", r)
-        print(best_run)
-        print("\nPercentagem Invalidos:", invalids/20*100)
+        #print("\nRepeticao", r)
+        #print(best_run)
+        #print("\nPercentagem Invalidos:", invalids/20*100)
 
         mbf += best_run.fitness
 
