@@ -21,9 +21,9 @@ class Grid():
 
     def __repr__(self):
         string = ""
-        for y in range(0, self.n_arestas):
-            for x in range(0, self.n_vertices):
-                string += str(self.grid[y][x]) + ' '
+        for x in range(0, self.n_arestas):
+            for y in range(0, self.n_vertices):
+                string += str(self.grid[x][y]) + ' '
 
             string += '\n'
 
