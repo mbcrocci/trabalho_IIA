@@ -1,6 +1,7 @@
 from sys import argv
 import minimum_vertex_cover as mvc
 from Grid import Grid
+from random import randint
 
 
 def run():
@@ -13,8 +14,8 @@ def run():
 
     graph, n_vertices, n_arestas = read_file(file_name)
 
-    graph_show = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
-    show_graph(graph_show)
+    full_grap = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
+    show_graph(full_grap)
 
     # Criar uma lista com todos os vertices
     keys = list(graph[0].keys()) + list(graph[1].keys())
@@ -57,14 +58,23 @@ def run():
     print("\nSOLUCAO: tam =", len(sol_list))
     print(sol_list)
 
-    sol_bin = []
     sol_bin = sol_inicial(all_vertices, sol_list)
     print("SOL BIN: ", sol_bin)
 
-    g = Grid(n_vertices, n_arestas)
+    g = Grid(n_vertices, full_grap)
 
     print("GRID:")
     print(g)
+
+    pop = []  # 50 e o tamanho da populacao
+    for i in range(50):
+        pop.append(gerar_solucao(n_vertices))
+
+
+def gerar_solucao(n_vertices):
+    sol = []
+    for v in range(n_vertices):
+        sol.append(randint(0, 1))
 
 
 def sol_inicial(all_vertices, sol_list):

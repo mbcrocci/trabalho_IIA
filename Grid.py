@@ -1,28 +1,32 @@
-from random import randint
+class Grid:
+    def __init__(self, n_vertices, graph):
+        def generate_grid_0():
+            vg = []
+            for v in range(n_vertices):
+                ag = []
+                for a in range(n_vertices):
+                    ag.append(0)
 
+                vg.append(ag)
 
-class Grid():
-    def __init__(self, n_vertices, n_arestas):
-        def generate_grid():
-            ag = []
+            return vg
 
-            for a in range(n_arestas):
-                vg = []
-                for v in range(n_vertices):
-                    vg.append(randint(0, 1))
-
-                ag.append(vg)
-
-            return ag
-
-        self.grid = generate_grid()
+        self.grid = generate_grid_0()
         self.n_vertices = n_vertices
-        self.n_arestas = n_arestas
+        self.graph = graph
+
+        for k in self.graph.keys():
+            for a in self.graph[k]:
+                l = 0
+                while l+1 != len(self.graph[k]) and l < n_vertices:
+                    l += 1
+
+                self.grid[k][a] = 1
 
     def __repr__(self):
         string = ""
-        for x in range(0, self.n_arestas):
-            for y in range(0, self.n_vertices):
+        for x in range(0, self.n_vertices-1):
+            for y in range(0, self.n_vertices-1):
                 string += str(self.grid[x][y]) + ' '
 
             string += '\n'
