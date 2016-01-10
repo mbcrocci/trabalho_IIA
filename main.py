@@ -2,6 +2,7 @@ from sys import argv
 import minimum_vertex_cover as mvc
 from Genetic import Pop, Solucao
 
+
 def run():
     # open File
     try:
@@ -14,20 +15,32 @@ def run():
     full_graph = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
     show_graph(full_graph)
 
-    sol_opt = pesquisa_local(graph) # constante
+    op = menu()
 
-    sol_bin = sol_in_bin(n_vertices, sol_opt)
-    print("SOL BIN:\n", sol_bin)
+    if op == '1':
+        sol_opt = pesquisa_local(graph)
+        print("\nSOLUCAO: ", sol_opt)
 
-    alg_genetico(100, n_vertices, full_graph)
+        sol_bin = sol_in_bin(n_vertices, sol_opt)
+        print("SOL BIN: ", sol_bin)
+
+    elif op == '2':
+        alg_genetico(n_vertices, full_graph)
+
+    else:
+        print("Invalid option")
 
 
-def alg_genetico(runs, n_geracoes, graph):
+def alg_genetico(n_geracoes, graph):
+    runs = int(input("N. runs: "))
+
+    settings = get_settings()
+
     mbf = 0.0
     best_ever = None
 
     for r in range(runs):
-        pop = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=n_geracoes, max_gen=100)
+        pop = Pop(settings, n_geracoes)
         pop.evaluate(graph)
         gen_actual = 1
 
@@ -61,17 +74,6 @@ def alg_genetico(runs, n_geracoes, graph):
     print(best_ever.sol)
 
 
-def all_vert(graph):
-    # Criar uma lista com todos os vertices
-    keys = list(graph[0].keys()) + list(graph[1].keys())
-    all_vertices = []
-    for v in keys:
-        if v not in all_vertices:
-            all_vertices.append(v)
-
-    return all_vertices
-
-
 def pesquisa_local(graph):
     # MINIMUM VERTEX COVER
     print("\nMVC")
@@ -100,10 +102,18 @@ def pesquisa_local(graph):
             except ValueError:
                 pass
 
-    print("\nSOLUCAO: tam =", len(sol_list))
-    print(sol_list)
-
     return sol_list
+
+
+def all_vert(graph):
+    # Criar uma lista com todos os vertices
+    keys = list(graph[0].keys()) + list(graph[1].keys())
+    all_vertices = []
+    for v in keys:
+        if v not in all_vertices:
+            all_vertices.append(v)
+
+    return all_vertices
 
 
 def sol_in_bin(n_vertices, sol_list):
@@ -116,6 +126,31 @@ def sol_in_bin(n_vertices, sol_list):
         sol[v-1] = 1
 
     return sol
+
+
+def menu():
+    print("1 - Pesquisa Local")
+    print("2 - Algoritmo Genetico")
+
+    op = input("Option: ")
+    return op
+
+
+def get_settings():
+    op = input("Enter 1 for default settings 2 for costumized: ")
+    if op == '1':
+        pop_size = 20
+        prob_mut = 0.01
+        prob_rec = 0.7
+        max_gen = 100
+
+    else:
+        pop_size = int(input("Pop size: "))
+        prob_mut = float(input("Probabilidade de mutacao: "))
+        prob_rec = float(input("Probabilidade de reprocriacao: "))
+        max_gen = int(input("Max. Geracoes: "))
+
+    return [pop_size, prob_mut, prob_rec, max_gen]
 
 
 def show_graph(graph):

@@ -18,12 +18,15 @@ class Solucao:
 
 
 class Pop:
-    def __init__(self, pop_size, prob_mut, prob_rec, n_genes, max_gen):
-        self.pop_size = pop_size
-        self.prob_mut = prob_mut
-        self.prob_rec = prob_rec
+    def __init__(self, settings, n_genes):
         self.n_genes = n_genes
-        self.max_gen = max_gen
+        self.settings = settings
+
+        self.pop_size = settings[0]
+        self.prob_mut = settings[1]
+        self.prob_rec = settings[2]
+        self.max_gen = settings[3]
+
         self.pop = self.gera_pop_init()
 
     def gera_pop_init(self):
@@ -59,11 +62,7 @@ class Pop:
         return best
 
     def tournament(self):
-        """
-        Realiza um torneio aleatorio
-        :return: parents (Pop)
-        """
-        parents = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=self.n_genes, max_gen=100)
+        parents = Pop(self.settings, self.n_genes)
         for i in range(0, self.pop_size-1):
             x1 = randint(0, self.pop_size-1)
             x2 = randint(0, self.pop_size-1)
@@ -87,7 +86,7 @@ class Pop:
         return descendents
 
     def crossover(self, parents):
-        offspring = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=self.n_genes, max_gen=100)
+        offspring = Pop(self.settings, self.n_genes)
         offspring.gera_pop_init()
 
         for i in range(0, self.pop_size-1):
