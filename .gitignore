@@ -1,3 +1,4 @@
 *.clq
 __pycache__/*
 .idea/*
+*.spec

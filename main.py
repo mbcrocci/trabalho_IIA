@@ -27,6 +27,9 @@ def run():
     elif op == '2':
         alg_genetico(n_vertices, full_graph)
 
+    elif op == '3':
+        hybrid(n_vertices, graph)
+
     else:
         print("Invalid option")
 
@@ -50,6 +53,61 @@ def alg_genetico(n_geracoes, graph):
             parents = pop.tournament()
             pop = pop.genetic_operators(parents)
             pop.evaluate(graph)
+
+            best_run = pop.get_best()
+            gen_actual += 1
+
+        invalids = 0
+        for s in pop.pop:
+            if not s.valido:
+                invalids += 1
+
+        print("\nRepeticao", r)
+        print(best_run)
+        print("\nPercentagem Invalidos:", invalids/20*100) # pop_size / 100
+
+        mbf += best_run.fitness
+        print("MBF = ", mbf)
+
+        if r == 0 or best_run.fitness > best_ever.fitness:
+            best_ever = best_run
+
+    print("MBF: ", mbf)
+    print("MELHOR SOLUCAO ENCONTRADA:")
+    print(best_ever.sol)
+
+
+def hybrid(n_geracoes, graph):
+    """
+    :param n_geracoes: igual a numero de vertices no grapho
+    :param graph: tuple dos dois mapas retirados de read file
+    :return:
+
+    O Algoritmo hibrido e exactamente igual ao genetico, no entanto, introduz a solucao optima
+    conseguida pela pesquisa local na populacao inicial.
+    """
+
+    sol_bin = sol_in_bin(n_geracoes, pesquisa_local(graph))
+    full_graph = {**graph[0], **graph[1]} # syntax python 3.5 (junta os 2 dicts num so)
+
+    runs = int(input("N. runs: "))
+    settings = get_settings()
+
+    mbf = 0.0
+    best_ever = None
+
+    for r in range(runs):
+        pop = Pop(settings, n_geracoes)
+        pop.pop[0].sol = sol_bin
+        pop.evaluate(full_graph)
+        gen_actual = 1
+
+        best_run = pop.get_best()
+
+        while gen_actual < n_geracoes:
+            parents = pop.tournament()
+            pop = pop.genetic_operators(parents)
+            pop.evaluate(full_graph)
 
             best_run = pop.get_best()
             gen_actual += 1
@@ -131,6 +189,7 @@ def sol_in_bin(n_vertices, sol_list):
 def menu():
     print("1 - Pesquisa Local")
     print("2 - Algoritmo Genetico")
+    print("3 - Algoritmo hibrido")
 
     op = input("Option: ")
     return op
