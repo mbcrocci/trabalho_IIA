@@ -34,35 +34,36 @@ class Pop:
 
         return pop
 
-    def evaluate(self):
+    def evaluate(self, graph):
+        # (TODO): Ver se este fitness pode ser calculado de outra maneira
         for s in self.pop:
-            s.fitness = self.evaluate_sol(s)
-
-    def evaluate_sol(self, s):
-        ft = 0
-        # (TODO): Ver se este fitness pode ser calculado de outra maneira§
-        for i in range(0, self.n_genes-1):
-            if s.sol[i] == 1:
-                for j in range(0, self.n_genes-1):
-                    if i != j and s.sol[j] == 1:
-                        ft -= 1
-
-        if ft == 0:
-            for i in range(0, self.n_genes-1):
-                if s.sol[i] == 1:
-                    ft += 1
-
-        return ft
+            s.fitness = sum(s.sol)
+            # por cada elemento da solucao
+            for i, b1 in enumerate(s.sol):
+                # se for 1 (index+1 pertence a solucao)
+                if b1 == 1:
+                    # percorre outra vez a solucao e ve se aquele vertice conhece algum outro
+                    for j, b2 in enumerate(s.sol):
+                        if i != j and b2 == 1:
+                            if i in graph[j+1] or j in graph[i+1]:
+                                s.valido = False
+                                break
 
     def get_best(self):
         best = Solucao(self.n_genes)
+        best.fitness = self.n_genes
         for s in self.pop:
             if s.fitness < best.fitness:
                 best = s
 
         return best
 
-    def tournament(self, parents):
+    def tournament(self):
+        """
+        Realiza um torneio aleatorio
+        :return: parents (Pop)
+        """
+        parents = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=self.n_genes, max_gen=100)
         for i in range(0, self.pop_size-1):
             x1 = randint(0, self.pop_size-1)
             x2 = randint(0, self.pop_size-1)
@@ -70,11 +71,13 @@ class Pop:
             while x1 == x2:
                 x2 = randint(0, self.pop_size-1)
 
-            if self.pop[x1].fitness > self.pop[x2].fitness:
-                parents.pop[i] = self.pop[x1]
+            # so lhe interessa aquelas que sao validas
+            if self.pop[x1].valido and self.pop[x2].valido:
+                if self.pop[x1].fitness > self.pop[x2].fitness:
+                    parents.pop[i] = self.pop[x1]
 
-            else:
-                parents.pop[i] = self.pop[x2]
+                else:
+                    parents.pop[i] = self.pop[x2]
 
         return parents
 

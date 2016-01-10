@@ -17,28 +17,27 @@ def run():
     sol_opt = pesquisa_local(graph) # constante
 
     sol_bin = sol_in_bin(n_vertices, sol_opt)
-    print("SOL BIN: ", sol_bin)
+    print("SOL BIN:\n", sol_bin)
 
-    alg_genetico(100, n_vertices)
+    alg_genetico(100, n_vertices, full_graph)
 
 
-def alg_genetico(runs, n_geracoes):
+def alg_genetico(runs, n_geracoes, graph):
     mbf = 0.0
     best_ever = None
 
     for r in range(runs):
         pop = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=n_geracoes, max_gen=100)
-        pop.evaluate()
+        pop.evaluate(graph)
         gen_actual = 1
 
         best_run = pop.get_best()
 
-        parents = Pop(pop_size=20, prob_mut=0.01, prob_rec=0.7, n_genes=n_geracoes, max_gen=100)
-
         while gen_actual < n_geracoes:
-            parents = pop.tournament(parents)
+            parents = pop.tournament()
             pop = pop.genetic_operators(parents)
-            pop.evaluate()
+            pop.evaluate(graph)
+
             best_run = pop.get_best()
             gen_actual += 1
 
@@ -47,11 +46,12 @@ def alg_genetico(runs, n_geracoes):
             if not s.valido:
                 invalids += 1
 
-        #print("\nRepeticao", r)
-        #print(best_run)
-        #print("\nPercentagem Invalidos:", invalids/20*100)
+        print("\nRepeticao", r)
+        print(best_run)
+        print("\nPercentagem Invalidos:", invalids/20*100) # pop_size / 100
 
         mbf += best_run.fitness
+        print("MBF = ", mbf)
 
         if r == 0 or best_run.fitness > best_ever.fitness:
             best_ever = best_run
@@ -79,7 +79,6 @@ def pesquisa_local(graph):
     # calcula o minimum vertex cover
     m = mvc.min_vertex_cover(graph[0], graph[1])
     show_graph(m)
-
     """
         Sendo A   - conjunto de todos os vertices
               I   - conjunto de todos os vertices independentes
